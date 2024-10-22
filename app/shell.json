@@ -1,0 +1,33 @@
+{
+
+		"load": [ 
+			"shell/shell.elf",
+			"shell/ls.elf",
+		],
+
+
+		"cd":"shell/cd.elf",
+		"cat":"shell/cat.elf",
+		"ls":"shell/ls.elf",
+		"pwd":"shell/pwd.elf",
+		"cp":"shell/cp.elf",
+		"rm":"shell/rm.elf",
+		"touch":"shell/touch.elf",
+		"mkdir":"shell/mkdir.elf",
+		"rmdir":"shell/rmdir.elf",
+		"dump":"shell/dump.elf",
+		"ps":"shell/ps.elf",
+		"mem":"shell/mem.elf",
+		"reboot":"shell/reboot.elf",
+		"run":"shell/run.elf",
+		"load":"shell/load.elf",
+		"kill":"shell/kill.elf",
+		"echo":"shell/echo.elf",
+		"app2":"bin/app2.elf",
+		"help":"shell/help.elf",
+		"shell":"shell/shell.elf",
+		"loader":"boot/loader.elf",
+		"basic":"shell/basic.elf",
+		"vm":"shell/rvvm.elf",
+		"blink":"bin/blink.elf",
+}
