@@ -3,10 +3,11 @@
 
 
 #define DRAM_SIZE 125000 // Tamaño de la memoria RAM simulada
-#define BLOCK_SIZE 32
+#define BLOCK_SIZE 64
 typedef struct {
     FILE *file;
     uint32_t size;
+    char *p;
 } Memory;
 
 

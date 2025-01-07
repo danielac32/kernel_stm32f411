@@ -48,5 +48,5 @@ extern	struct	dentry	devtab[]; /* one entry per device */
 
 /* Configuration and Size Constants */
 
-#define	NPROC	     10		/* number of user processes		*/
-#define	NSEM	     10		/* number of semaphores			*/
+#define	NPROC	     12		/* number of user processes		*/
+#define	NSEM	     12		/* number of semaphores			*/

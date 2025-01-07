@@ -1,7 +1,7 @@
 /* memory.h - roundmb, truncmb, freestk */
 #include <kernel.h>
 #define MAXADDR		0x2001f400		/* 64kB SRAM */
-#define HANDLERSTACK	1024			/* Size reserved for stack in Handler mode */
+#define HANDLERSTACK	1024*4			/* Size reserved for stack in Handler mode */
 #define	PAGE_SIZE	1024 // TODO: unused?
 
 /*----------------------------------------------------------------------

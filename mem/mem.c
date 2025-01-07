@@ -7,6 +7,7 @@
 
 
 extern void exit();
+
 uint32_t get_file_size(FILE *file) {
     fseek(file, 0, SEEK_END); // Moverse al final del archivo
     uint32_t size = ftell(file); // Obtener la posición actual
@@ -14,6 +15,45 @@ uint32_t get_file_size(FILE *file) {
     return size; // Retornar el tamaño
 }
 
+#if 1
+
+Memory create_memory(const char *filename) {
+    Memory mem;
+
+    char *tmp=full_path(filename);
+
+    mem.file = fopen(tmp, "rb"); // Abrir el archivo en modo lectura
+    if (mem.file == NULL) {
+        printf("Error: No se pudo abrir el archivo.\n");
+        exit();
+    }
+
+    // Obtener el tamaño del archivo original
+    mem.size = get_file_size(mem.file);
+    mem.p = (char *)malloc(90000);
+    memset(mem.p,0,90000);
+    uint8_t buffer[BLOCK_SIZE]; // Buffer para copiar datos
+    size_t bytes_read;
+    int part=0;
+    uint32 br=0;
+    fread(mem.p, mem.size,1,mem.file);
+
+   // while(part<mem.size){
+     //       br=fread(buffer, BLOCK_SIZE,1,mem.file);
+            //fwrite(buffer, BLOCK_SIZE,1,dram_file);
+       //     memcpy(mem.p,buffer,br);
+            //memset(buffer,0,br);
+         //   part += br;
+          
+    //}
+ 
+    fclose(mem.file);
+    //hexDump2(0,mem.p,mem.size);
+    printf("END\n");
+    return mem;
+}
+
+#else
 
 Memory create_memory(const char *filename) {
     Memory mem;
@@ -46,6 +86,13 @@ Memory create_memory(const char *filename) {
     uint8_t buffer[BLOCK_SIZE]; // Buffer para copiar datos
     size_t bytes_read;
     int part=0;
+    uint32_t target_size = DRAM_SIZE;
+    while(part<target_size){
+         fwrite(buffer, BLOCK_SIZE,1,dram_file);
+         part += BLOCK_SIZE;
+    }
+    part=0;
+    fseek(dram_file, 0, SEEK_SET);
     while(part<mem.size){
             fread(buffer, BLOCK_SIZE,1,mem.file);
             fwrite(buffer, BLOCK_SIZE,1,dram_file);
@@ -54,7 +101,7 @@ Memory create_memory(const char *filename) {
     }
 
 
-    /*const uint32_t target_size = size;
+    /*const uint32_t target_size = 125000;
     if (mem.size < target_size) {
         uint8_t *zero_data = (uint8_t *)calloc(target_size - mem.size, sizeof(uint8_t));
         fwrite(zero_data, sizeof(uint8_t), target_size - mem.size, dram_file);
@@ -70,6 +117,7 @@ Memory create_memory(const char *filename) {
     printf("END\n");
     return mem;
 }
+
 
  
 int memory_read(uint32_t addr, void *buf, int len){
@@ -232,3 +280,4 @@ void cache_get_stat(uint64_t *phit, uint64_t *paccessed)
     *phit = hit;
     *paccessed = accessed;
 }
+#endif

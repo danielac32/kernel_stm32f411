@@ -10,7 +10,7 @@ extern void _fdoprnt(char *, va_list, int (*)(did32, char), int);
 //extern int xinu_putc(did32, char);
 
 
- 
+ extern void    _doprnt(char *, va_list, int (*)(int));
 /*------------------------------------------------------------------------
  *  printf  -  standard C printf function
  *------------------------------------------------------------------------
@@ -50,7 +50,7 @@ int printf(
     va_list ap;
 
     va_start(ap, fmt);
-    _fdoprnt((char *)fmt, ap, syscallp.putc, stdout);
+   _fdoprnt((char *)fmt, ap, syscallp.putc, stdout);
     va_end(ap);
 
     return 0;

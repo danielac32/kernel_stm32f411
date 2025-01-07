@@ -22,7 +22,7 @@ static uint32_t HandleOtherCSRRead( uint8_t *image, uint16_t csrno );
 
 #define MINIRV32WARN( x... ) printf( x );
 #define MINIRV32_DECORATE static
-#define MINI_RV32_RAM_SIZE 126000
+#define MINI_RV32_RAM_SIZE 90000
 #define MINIRV32_IMPLEMENTATION
 #define MINIRV32_POSTEXEC( pc, ir, retval )             \
 	{                                                   \
@@ -37,8 +37,76 @@ static uint32_t HandleOtherCSRRead( uint8_t *image, uint16_t csrno );
 
 #define MINIRV32_CUSTOM_MEMORY_BUS
 
- 
+
+
+#if 1
+ // Verificar si el desplazamiento + el tamaño de los datos no excede el tamaño total de la memoria
+static inline bool check_memory_bounds(uint32_t ofs, uint32_t size)
+{
+    return (ofs + size <= MINI_RV32_RAM_SIZE);
+}
+
+// Función para almacenar 4 bytes (uint32_t)
 static void MINIRV32_STORE4(uint32_t ofs, uint32_t val)
+{
+    // Comprobación de límites de memoria
+    if (check_memory_bounds(ofs, 4)) {
+        *((uint32_t *)(mem.p + ofs)) = val;
+    }
+}
+
+// Función para almacenar 2 bytes (uint16_t)
+static void MINIRV32_STORE2(uint32_t ofs, uint16_t val)
+{
+    // Comprobación de límites de memoria
+    if (check_memory_bounds(ofs, 2)) {
+        *((uint16_t *)(mem.p + ofs)) = val;
+    }
+}
+
+// Función para almacenar 1 byte (uint8_t)
+static void MINIRV32_STORE1(uint32_t ofs, uint8_t val)
+{
+    // Comprobación de límites de memoria
+    if (check_memory_bounds(ofs, 1)) {
+        *((uint8_t *)(mem.p + ofs)) = val;
+    }
+}
+
+// Función para cargar 4 bytes (uint32_t)
+static uint32_t MINIRV32_LOAD4(uint32_t ofs)
+{
+    uint32_t val = 0;
+    // Comprobación de límites de memoria
+    if (check_memory_bounds(ofs, 4)) {
+        val = *((uint32_t *)(mem.p + ofs));
+    }
+    return val;
+}
+
+// Función para cargar 2 bytes (uint16_t)
+static uint16_t MINIRV32_LOAD2(uint32_t ofs)
+{
+    uint16_t val = 0;
+    // Comprobación de límites de memoria
+    if (check_memory_bounds(ofs, 2)) {
+        val = *((uint16_t *)(mem.p + ofs));
+    }
+    return val;
+}
+
+// Función para cargar 1 byte (uint8_t)
+static uint8_t MINIRV32_LOAD1(uint32_t ofs)
+{
+    uint8_t val = 0;
+    // Comprobación de límites de memoria
+    if (check_memory_bounds(ofs, 1)) {
+        val = *((uint8_t *)(mem.p + ofs));
+    }
+    return val;
+}
+#else
+	static void MINIRV32_STORE4(uint32_t ofs, uint32_t val)
 {
  
 	cache_write( ofs, &val, 4 );
@@ -89,31 +157,34 @@ static  uint8_t MINIRV32_LOAD1( uint32_t ofs )
 	 
 	return val;
 }
+#endif
+
+
 
 
 #include "mini-rv32ima.h"
 
-struct MiniRV32IMAState *core;
+struct MiniRV32IMAState core;
 
 
 int riscv_emu()
 {
 	mem = create_memory("riscv/kernel.bin");
 	int coresize32 = 0;
-	core = (struct MiniRV32IMAState*)malloc(sizeof(struct MiniRV32IMAState));
-	coresize32 = sizeof(struct MiniRV32IMAState) / 4;      // Number of UInt32 in core struct
+	//core = (struct MiniRV32IMAState*)malloc(sizeof(struct MiniRV32IMAState));
+	//coresize32 = sizeof(struct MiniRV32IMAState) / 4;      // Number of UInt32 in core struct
 
 	  // Clear the struct
-	for (int i = 0; i < coresize32; i++) {
-	    *(uint32_t*)((uint8_t*)core + 4*i) = 0;
-	}
+	//for (int i = 0; i < coresize32; i++) {
+	  //  *(uint32_t*)((uint8_t*)core + 4*i) = 0;
+	//}
 
    // cache_reset();
-	core->regs[10] = 0x00; // hart ID
-	core->regs[11] = 0;
-	core->extraflags |= 3; // Machine-mode.
+    core.regs[10] = 0x00; // hart ID
+	core.regs[11] = 0;
+	core.extraflags |= 3; // Machine-mode.
 
-	core->pc = MINIRV32_RAM_IMAGE_OFFSET;
+	core.pc = MINIRV32_RAM_IMAGE_OFFSET;
 	long long instct = -1;
     int instrs_per_flip = 1024;
 	#if 1
@@ -121,12 +192,12 @@ int riscv_emu()
 		while(1){
 			
 			int ret;
-			uint64_t *this_ccount = ((uint64_t*)&core->cyclel);
+			uint64_t *this_ccount = ((uint64_t*)&core.cyclel);
 			uint32_t elapsedUs = cycleCount() / lastTime;
 
 			lastTime += elapsedUs;
 			//uint32 q=disable();
-			ret = MiniRV32IMAStep( core, NULL, 0, elapsedUs, instrs_per_flip ); // Execute upto 1024 cycles before breaking out.
+			ret = MiniRV32IMAStep( &core, NULL, 0, elapsedUs, instrs_per_flip ); // Execute upto 1024 cycles before breaking out.
 			//restore(q);
 			switch ( ret )
 			{
@@ -136,18 +207,21 @@ int riscv_emu()
 					break;
 				case 3: instct = 0; break;
 				case 0x7777:
-					printf( "\n\rREBOOT@0x%08x%08x\n\r", (unsigned int)core->cycleh,  (unsigned int)core->cyclel );
+					printf( "\n\rREBOOT@0x%08x%08x\n\r", (unsigned int)core.cycleh,  (unsigned int)core.cyclel );
 					 
 					//cache_reset();
-					free(core);
+					//free(core);
+					free(mem.p);
 					return EMU_REBOOT; // syscon code for reboot
 				case 0x5555:
-					printf( "\n\rPOWEROFF@0x%08x%08x\n\r",  (unsigned int)core->cycleh,  (unsigned int)core->cyclel );
-					free(core);
+					printf( "\n\rPOWEROFF@0x%08x%08x\n\r",  (unsigned int)core.cycleh,  (unsigned int)core.cyclel );
+					//free(core);
+					free(mem.p);
 					return EMU_POWEROFF; // syscon code for power-off
 				default:
 					printf( "\n\rUnknown failure\n" );
-					free(core);
+					//free(core);
+					free(mem.p);
 					return EMU_UNKNOWN;
 					break;
 			}
@@ -194,7 +268,7 @@ int riscv_emu()
 	}
 
 	#endif
-	free(core);
+	//free(core);
 	return EMU_UNKNOWN;
 }
 
@@ -248,7 +322,7 @@ int load_sd_file( uint32_t addr, const char filename[] )
     while(part<fileLength){
          //syscallp.seek(fs,part,LFS_SEEK_SET);
          br=fread(buff, 1024,1,fd);
-         memory_write( addr+part,buff, br );
+        // memory_write( addr+part,buff, br );
          memset(buff,0,br);
          printf("%d->%d\n",part, fileLength);
          part += br;

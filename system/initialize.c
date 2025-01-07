@@ -205,7 +205,6 @@ int start_process(){
 int nullprocess(void) {
 
      syscall_init(&syscallp);
-     printf("ready...\n");
 	 resume(create(start_process, 4096, 50, "start", 1, 0));
 	 while(1);
 	 return 0;

@@ -13,7 +13,7 @@ RM = rm -f
 fixpath = $(strip $1)
 
  
-CFLAGS      ?=-O0 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -ffreestanding -nostartfiles  -fno-builtin
+CFLAGS      ?=-O1 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -ffreestanding -nostartfiles  -fno-builtin
 LDFLAGS      = -ffreestanding -nostartfiles  -fno-builtin -I include  
 INCLUDES     =   -I include -I stm32lib  -I sd-spi/Inc -I gpio/Inc -I fat32/Inc -I riscv -I spi/Inc -I w25q/Inc -I usb/Inc -I usb/class -I mem
 CFLAGS2     ?= $(CFLAGS) -mthumb $(OPTFLAGS)
