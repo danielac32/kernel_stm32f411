@@ -23,7 +23,7 @@ int	rand_r(
 	  unsigned int*		seedp
 	)
 {
-	*seedp = 16807 * (*seedp) % (RAND_MAX + 1);
+	*seedp = 16807 * (*seedp) % (RAND_MAX - 1);
 	return (int)(*seedp);
 }
 

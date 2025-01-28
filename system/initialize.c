@@ -62,6 +62,8 @@ int blink2(int nargs, char *args[])
 }
 
 
+
+
 void blink1(){
 	int c=0;
 	int ulen;
@@ -197,15 +199,21 @@ int start_process(){
 	ready(create(shell, 4096, 52, "shell", 1, 0));
 
     printf("boot: %s\n",getUrlTargetFileBoot() );
+    
+
 
 	return 0;
 }
+
+
+
 
 
 int nullprocess(void) {
 
      syscall_init(&syscallp);
 	 resume(create(start_process, 4096, 50, "start", 1, 0));
+ 
 	 while(1);
 	 return 0;
 }

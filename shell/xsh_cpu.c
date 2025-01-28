@@ -4,49 +4,64 @@
 #include <fat_filelib.h>
 
  
-#define CPU_CLOCK_HZ 84000000  // 100 MHz
-#define TICK_HZ 100000000 / 1000            // 1 ms por tick
+void update_runtime() {
+    static uint32 last_time = 0;
+    uint32 current_time = cycleCount(); // Obtener el tiempo actual del sistema
+
+    if (last_time != 0) {
+        uint32 elapsed_time = current_time - last_time;
+
+        // Actualizar el tiempo de ejecución de la tarea actual
+       // if (currpid != NULLPROC) {
+            proctab[currpid].runtime += elapsed_time;
+        //}
+    }
+
+    last_time = current_time;
+    printf("last time: %d\n", last_time);
+}
 
 
-uint32 totalTicks = 0;    // Contador de tiempo total (ticks)
-extern uint32 idleTicks;     // Contador de tiempo en la tarea idle
+void calculate_cpu_usage() {
+    uint32 total_runtime = 0;
 
+    // Calcular el tiempo total de ejecución de todas las tareas
+    uint32 q=disable();
+    for (int i = 0; i < NPROC; i++) {
+        if (proctab[i].prstate != PR_FREE) {
+            total_runtime += proctab[i].runtime;
+        }
+    }
+    restore(q);
+   // printf("total runtime: %d\n", total_runtime);
+
+    if (total_runtime == 0) {
+        printf("Error: Tiempo total de ejecución es 0.\n");
+        return;
+    }
+
+    q=disable();
+    // Calcular el uso de CPU para cada tarea
+    for (int i = 0; i < NPROC; i++) {
+        if (proctab[i].prstate != PR_FREE) {
+            uint32 cpu_usage = proctab[i].runtime / total_runtime * 100;
+            kprintf("Tarea: %s, Uso de CPU: %d\n", proctab[i].prname, (uint32)cpu_usage);
+        }
+    }
+    restore(q);
+    // Calcular el uso de CPU total
+    uint32 total_cpu_usage = total_runtime / cycleCount() * 100;
+    printf("Uso de CPU total: %d\n", (uint32)total_cpu_usage);
+   
+}
  
 
-uint32 calculateIdleTimePercentage(void) {
-    totalTicks = (uint32)cycleCount();
-    if (totalTicks == 0) {
-        return 0;  // Evitar división por cero
-    }
 
-    // Calcular el porcentaje de tiempo en idle
-    uint32 idlePercentage = (idleTicks / totalTicks) ;
-    return idlePercentage;
-}
-uint32 calculateProcessingTimePercentage(void) {
-
-
-    totalTicks = (uint32)cycleCount();
-    if (totalTicks == 0) {
-        return 0.0;  // Evitar división por cero
-    }
-
-    // Calcular el porcentaje de tiempo procesando tareas
-    uint32_t processingTicks = totalTicks - idleTicks;  // Ticks en los que el CPU está procesando
-    uint32 processingPercentage = (processingTicks / totalTicks);
-
-    return processingPercentage;
-}
-
-void showIdleTime(void) {
-    uint32 idlePercentage = calculateProcessingTimePercentage();//calculateIdleTimePercentage();
-    printf(" time: %d\n", idlePercentage);
-}
 
 shellcmd xsh_cpu(int nargs, char *args[])
 {
-	 showIdleTime();
-  
+	  update_runtime();       // Actualizar el tiempo de ejecución
+      calculate_cpu_usage();  // Calcular y mostrar el uso de CPU
  
 	return 0;
 }

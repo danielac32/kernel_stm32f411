@@ -93,6 +93,7 @@ struct procent {		/* Entry in the process table		*/
   void *img;
   //char parg[5][16];//
   void *parg[MAX_ARG]; 
+  uint32  runtime;    // Tiempo de ejecución acumulado de la tarea
 };
 
 /* Marker for the top of a process stack (used to help detect overflow)	*/
