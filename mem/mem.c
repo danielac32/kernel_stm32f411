@@ -30,7 +30,7 @@ Memory create_memory(const char *filename) {
 
     // Obtener el tamaño del archivo original
     mem.size = get_file_size(mem.file);
-    mem.p = (char *)malloc(90000);
+    mem.p = (char *)malloc(92000);
     memset(mem.p,0,90000);
     uint8_t buffer[BLOCK_SIZE]; // Buffer para copiar datos
     size_t bytes_read;
