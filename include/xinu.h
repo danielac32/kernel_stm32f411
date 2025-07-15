@@ -15,7 +15,7 @@
  
 #include <device.h>
 #include <interrupt.h>
- 
+#include <ctype.h>
 #include <name.h>
 #include <shell.h>
 #include <prototypes.h>

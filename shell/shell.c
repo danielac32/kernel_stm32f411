@@ -38,6 +38,9 @@ char* full_path(const char* name) {
 }
 
 
+extern int tinyscript(int argc, char *argv[]);
+extern int cc(int argc, char *argv[]);
+extern int basic(int argc, char **argv);
 /************************************************************************/
 /* Table of Xinu shell commands and the function associated with each	*/
 /************************************************************************/
@@ -64,8 +67,11 @@ const	struct	cmdent	cmdtab[] = {
 	{"run",     FALSE,  xsh_run},
     {"format",  FALSE,  xsh_format},
 	{"test",    FALSE,  xsh_test},
-	{"loadkernel",    FALSE,  xsh_loadkernel},
+	//{"loadkernel",    FALSE,  xsh_loadkernel},
 	{"cpu",    FALSE,  xsh_cpu},
+	{"interp",FALSE,tinyscript},
+	{"cc",FALSE,cc},
+	//{"basic",FALSE,basic},
 };
 
 uint32	ncmd = sizeof(cmdtab) / sizeof(struct cmdent);

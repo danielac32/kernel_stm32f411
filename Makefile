@@ -15,7 +15,7 @@ fixpath = $(strip $1)
  
 CFLAGS      ?=-O1 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -ffreestanding -nostartfiles  -fno-builtin
 LDFLAGS      = -ffreestanding -nostartfiles  -fno-builtin -I include  
-INCLUDES     =   -I include -I stm32lib  -I sd-spi/Inc -I gpio/Inc -I fat32/Inc -I riscv -I spi/Inc -I w25q/Inc -I usb/Inc -I usb/class -I mem
+INCLUDES     =   -I include -I stm32lib  -I sd-spi/Inc -I gpio/Inc -I fat32/Inc -I spi/Inc -I w25q/Inc -I usb/Inc -I usb/class -I tinyscript
 CFLAGS2     ?= $(CFLAGS) -mthumb $(OPTFLAGS)
 LDSCRIPT     =  ld.script
 
@@ -40,10 +40,10 @@ SRCSPI         = $(wildcard spi/Src/*.c) $(wildcard sd-spi/Src/*.c)
 SPIOBJ         = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(notdir $(basename $(SRCSPI)))))
 
 
-SRCW25Q         = $(wildcard w25q/Src/*.c) $(wildcard riscv/*.c) $(wildcard mem/*.c)
+SRCW25Q         = $(wildcard w25q/Src/*.c) 
 W25QOBJ         = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(notdir $(basename $(SRCW25Q)))))
 
-SRCFAT32         = $(wildcard fat32/Src/*.c)
+SRCFAT32         = $(wildcard fat32/Src/*.c)  $(wildcard tinyscript/*.c) $(wildcard cc/*.c) #$(wildcard basic/*.c) 
 FAT32OBJ         = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(notdir $(basename $(SRCFAT32)))))
 
 

@@ -25,6 +25,12 @@ extern	int	printf2(const char *, ...);
 extern	int	sprintf(char *, char *, ...);
 
 
+extern int snprintf(
+    char *str,       // Buffer de salida
+    int size,     // Tamaño máximo del buffer
+ char *fmt, // Cadena de formato
+    ...              // Argumentos variables
+);
 /* Prototypes for character input and output functions */
 
 extern	int	fgetc(int);

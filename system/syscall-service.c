@@ -37,7 +37,7 @@ void *SVC_XINU_PUTS (uint32 *sp){
     //int size = sp[2];
 
     //while(usbd_ep_write(&udev, CDC_TXD_EP, str, size)==-1);
-    write(sp[1],sp[2],sp[3]);
+    write(sp[1],(char *)sp[2],sp[3]);
     return sp;  
 }
 void *SVC_XINU_GETC(uint32 *sp){

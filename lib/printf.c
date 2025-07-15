@@ -5,7 +5,7 @@
 #include <syscall.h>
 
  
-extern void _fdoprnt(char *, va_list, int (*)(did32, char), int);
+extern void _fdoprnt(char *, va_list, int (*)(int, int), int);
 //extern void _fdoprnt2(char *, va_list, int (*)(int,did32, char), int,int);
 //extern int xinu_putc(did32, char);
 

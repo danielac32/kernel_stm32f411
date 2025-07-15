@@ -24,8 +24,8 @@
 #define PENDSV_ENTRY		14
 #define SYSTICK_ENTRY		15
 
-extern uint64_t clockticks; // rolls over after 2^64/96MHz = 6089.1097 years
-extern uint64_t   cycleCount(void);
+extern uint32_t clockticks; // rolls over after 2^64/96MHz = 6089.1097 years
+extern uint32_t   cycleCount(void);
 extern void delay(uint32_t usec);
 //extern void delay_ms(uint32_t delay_ms);
 extern void delay_us(uint32_t delay_us);

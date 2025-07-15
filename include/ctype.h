@@ -31,3 +31,4 @@ extern const char _ctype_[];
 #define toascii(c)   (((int)(c))&0x7F)
 
 #define iseof(c)     (0x04 == (int)c)
+#define isblank(c) (c == ' ' || c == '\t')
